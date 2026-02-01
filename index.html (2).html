@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Dashboard - Sem 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            padding: 20px;
+            max-width: 428px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #00f5ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .date-input-container {
+            margin-top: 16px;
+        }
+
+        .date-input {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .date-input:focus {
+            border-color: #00f5ff;
+            box-shadow: 0 0 0 3px #00f5ff15;
+        }
+
+        .date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        .days-remaining {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #00f5ff;
+            font-weight: 600;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #666;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #00f5ff33;
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-sub {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .card-input {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #e0e0e0;
+            font-size: 12px;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .card-input:focus {
+            border-color: #00f5ff;
+        }
+
+        .card-select {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #e0e0e0;
+            font-size: 12px;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .card-select:focus {
+            border-color: #00f5ff;
+        }
+
+        .input-group {
+            margin-top: 8px;
+        }
+
+        .analytics-area {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .chart-container {
+            margin-bottom: 32px;
+        }
+
+        .chart-container:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 120px;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #00f5ff, #0088ff);
+            border-radius: 6px 6px 0 0;
+            position: relative;
+            min-height: 4px;
+        }
+
+        .bar.negative {
+            background: linear-gradient(180deg, #ff006e, #ff3366);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .line-chart {
+            height: 100px;
+            background: linear-gradient(180deg, #00f5ff10, transparent);
+            border-radius: 8px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .line-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .pie-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .pie-chart {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #00f5ff 0deg 180deg,
+                #ff006e 180deg 360deg
+            );
+            position: relative;
+        }
+
+        .pie-chart::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: #111;
+            border-radius: 50%;
+        }
+
+        .pie-legend {
+            flex: 1;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .legend-dot.productive {
+            background: #00f5ff;
+        }
+
+        .legend-dot.wasted {
+            background: #ff006e;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00f5ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .week-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .week-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .week-scroll::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 2px;
+        }
+
+        .week-scroll::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+
+        .week-card {
+            min-width: 200px;
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .week-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00f5ff;
+            margin-bottom: 12px;
+        }
+
+        .week-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .week-stat-label {
+            color: #888;
+        }
+
+        .week-stat-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .notes-area {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .note-input {
+            margin-bottom: 16px;
+        }
+
+        .note-input:last-child {
+            margin-bottom: 0;
+        }
+
+        .note-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #00f5ff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00f5ff;
+            color: #0a0a0a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="save-indicator" id="saveIndicator">Saved ✓</div>
+
+    <div class="header">
+        <h1>SEM 2 – LIFE DASHBOARD</h1>
+        <p id="dayCounter">Day 1 of Semester 2</p>
+        <div class="date-input-container">
+            <input type="date" id="startDate" class="date-input">
+            <p id="daysRemaining" class="days-remaining"></p>
+        </div>
+    </div>
+
+    <!-- Section 1: Today's Log -->
+    <div class="section">
+        <div class="section-title">Today's Log</div>
+        
+        <div class="card-grid">
+            <div class="card">
+                <span class="card-icon">😴</span>
+                <div class="card-label">Sleep</div>
+                <div class="card-value" id="displaySleep">0h</div>
+                <div class="card-sub" id="displaySleepQuality">N/A</div>
+                <div class="input-group">
+                    <input type="number" id="sleepHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                    <select id="sleepQuality" class="card-select">
+                        <option value="Poor">Poor quality</option>
+                        <option value="Fair">Fair quality</option>
+                        <option value="Good" selected>Good quality</option>
+                        <option value="Excellent">Excellent quality</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">🏋️</span>
+                <div class="card-label">Exercise</div>
+                <div class="card-value" id="displayExercise">0m</div>
+                <div class="card-sub" id="displayExerciseType">None</div>
+                <div class="input-group">
+                    <input type="number" id="exerciseMinutes" class="card-input" placeholder="Minutes" step="5" min="0" max="300">
+                    <select id="exerciseType" class="card-select">
+                        <option value="None">None</option>
+                        <option value="Gym">Gym workout</option>
+                        <option value="Running">Running</option>
+                        <option value="Yoga">Yoga</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Walk">Walk</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">📝</span>
+                <div class="card-label">Assignment</div>
+                <div class="card-value" id="displayAssignment">0h</div>
+                <div class="card-sub" id="displayAssignmentType">None</div>
+                <div class="input-group">
+                    <input type="number" id="assignmentHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                    <select id="assignmentType" class="card-select">
+                        <option value="None">None</option>
+                        <option value="Essay">Essay</option>
+                        <option value="Project">Project</option>
+                        <option value="Report">Report</option>
+                        <option value="Lab">Lab work</option>
+                        <option value="Presentation">Presentation</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">📚</span>
+                <div class="card-label">Academic Study</div>
+                <div class="card-value" id="displayAcademic">0h</div>
+                <div class="card-sub" id="displayAcademicSubject">None</div>
+                <div class="input-group">
+                    <input type="number" id="academicHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                    <select id="academicSubject" class="card-select">
+                        <option value="None">None</option>
+                        <option value="Math">Math</option>
+                        <option value="Science">Science</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Business">Business</option>
+                        <option value="Other">Other subjects</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <span class="card-icon">🧠</span>
+                <div class="card-label">Coding</div>
+                <div class="card-value" id="displayCoding">0h</div>
+                <div class="card-sub" id="displayCodingFocus">Normal</div>
+                <div class="input-group">
+                    <input type="number" id="codingHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                    <select id="codingFocus" class="card-select">
+                        <option value="Distracted">Distracted</option>
+                        <option value="Normal" selected>Normal</option>
+                        <option value="Focused">Focused</option>
+                        <option value="Deep focus">Deep focus</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">🎥</span>
+                <div class="card-label">Content</div>
+                <div class="card-value" id="displayContent">0h</div>
+                <div class="input-group">
+                    <input type="number" id="contentHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">📱</span>
+                <div class="card-label">Screen Time</div>
+                <div class="card-value" id="displayScreenTime">0h</div>
+                <div class="input-group">
+                    <input type="number" id="screenTimeHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                </div>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">🔁</span>
+                <div class="card-label">Reels</div>
+                <div class="card-value" id="displayReels">0h</div>
+                <div class="input-group">
+                    <input type="number" id="reelsHours" class="card-input" placeholder="Hours" step="0.5" min="0" max="24">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Progress Dashboard -->
+    <div class="section">
+        <div class="section-title">Progress Dashboard</div>
+        
+        <div class="analytics-area">
+            <div class="chart-container">
+                <div class="chart-title">Daily Breakdown</div>
+                <div class="bar-chart">
+                    <div class="bar" style="height: 0%;">
+                        <div class="bar-label">Code</div>
+                    </div>
+                    <div class="bar" style="height: 0%;">
+                        <div class="bar-label">Assign</div>
+                    </div>
+                    <div class="bar" style="height: 0%;">
+                        <div class="bar-label">Study</div>
+                    </div>
+                    <div class="bar" style="height: 0%;">
+                        <div class="bar-label">Content</div>
+                    </div>
+                    <div class="bar negative" style="height: 0%;">
+                        <div class="bar-label">Reels</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Sleep vs Coding Trend (Last 7 Days)</div>
+                <div class="line-chart">
+                    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+                        <polyline
+                            fill="none"
+                            stroke="#00f5ff"
+                            stroke-width="2"
+                            points="0,50 300,50"
+                        />
+                        <polyline
+                            fill="none"
+                            stroke="#00ff88"
+                            stroke-width="2"
+                            points="0,50 300,50"
+                        />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Time Distribution</div>
+                <div class="pie-container">
+                    <div class="pie-chart"></div>
+                    <div class="pie-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot productive"></div>
+                            <span>Productive: 50%</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot wasted"></div>
+                            <span>Wasted: 50%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Reality Check -->
+    <div class="section">
+        <div class="section-title">Reality Check</div>
+        
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value">0h</div>
+                <div class="stat-label">Most Productive Day</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">0h</div>
+                <div class="stat-label">Worst Reels Day</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">0h</div>
+                <div class="stat-label">Average Sleep</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-value">0 days</div>
+                <div class="stat-label">Workout Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Weekly Summary -->
+    <div class="section">
+        <div class="section-title">Weekly Summary</div>
+        
+        <div class="week-scroll" id="weekScroll">
+            <div class="week-card">
+                <div class="week-title">No data yet</div>
+                <div class="week-stat">
+                    <span class="week-stat-label">Start logging data</span>
+                    <span class="week-stat-value">📊</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Daily Notes -->
+    <div class="section">
+        <div class="section-title">Daily Notes</div>
+        
+        <div class="notes-area">
+            <div class="note-input">
+                <div class="note-label">What went right today?</div>
+                <textarea id="noteRight" rows="3" placeholder="Finished the React project ahead of schedule. Felt energized after morning workout."></textarea>
+            </div>
+            
+            <div class="note-input">
+                <div class="note-label">What to fix tomorrow?</div>
+                <textarea id="noteFix" rows="3" placeholder="Cut down reels time before bed. Start coding session earlier in the day."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>This dashboard is my mirror.</p>
+    </div>
+
+    <script>
+        const startDateInput = document.getElementById('startDate');
+        const dayCounter = document.getElementById('dayCounter');
+        const daysRemaining = document.getElementById('daysRemaining');
+        const saveIndicator = document.getElementById('saveIndicator');
+        
+        // Semester dates: Feb 2, 2025 to July 1, 2026
+        const semesterStartDate = new Date('2025-02-02');
+        const targetDate = new Date('2026-07-01');
+        
+        // Load data from localStorage
+        let dashboardData = JSON.parse(localStorage.getItem('dashboardData')) || {
+            entries: {}
+        };
+        
+        function calculateDays() {
+            const selectedDate = new Date(startDateInput.value);
+            
+            if (!startDateInput.value) {
+                dayCounter.textContent = 'Select a date';
+                daysRemaining.textContent = '';
+                return;
+            }
+            
+            selectedDate.setHours(0, 0, 0, 0);
+            const semStart = new Date(semesterStartDate);
+            semStart.setHours(0, 0, 0, 0);
+            
+            const daysPassed = Math.floor((selectedDate - semStart) / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.floor((targetDate - selectedDate) / (1000 * 60 * 60 * 24));
+            
+            dayCounter.textContent = `Day ${daysPassed + 1} of Semester 2`;
+            
+            if (daysLeft > 0) {
+                daysRemaining.textContent = `${daysLeft} days remaining until July 1st, 2026`;
+            } else if (daysLeft === 0) {
+                daysRemaining.textContent = `Today is July 1st, 2026! 🎉`;
+            } else {
+                daysRemaining.textContent = `Semester ended`;
+            }
+        }
+        
+        function showSaveIndicator() {
+            saveIndicator.classList.add('show');
+            setTimeout(() => {
+                saveIndicator.classList.remove('show');
+            }, 1000);
+        }
+        
+        function saveData() {
+            const currentDate = startDateInput.value;
+            if (!currentDate) return;
+            
+            const entry = {
+                sleep: parseFloat(document.getElementById('sleepHours').value) || 0,
+                sleepQuality: document.getElementById('sleepQuality').value || 'Good',
+                exercise: parseFloat(document.getElementById('exerciseMinutes').value) || 0,
+                exerciseType: document.getElementById('exerciseType').value || 'None',
+                assignment: parseFloat(document.getElementById('assignmentHours').value) || 0,
+                assignmentType: document.getElementById('assignmentType').value || 'None',
+                academic: parseFloat(document.getElementById('academicHours').value) || 0,
+                academicSubject: document.getElementById('academicSubject').value || 'None',
+                coding: parseFloat(document.getElementById('codingHours').value) || 0,
+                codingFocus: document.getElementById('codingFocus').value || 'Normal',
+                content: parseFloat(document.getElementById('contentHours').value) || 0,
+                screenTime: parseFloat(document.getElementById('screenTimeHours').value) || 0,
+                reels: parseFloat(document.getElementById('reelsHours').value) || 0,
+                noteRight: document.getElementById('noteRight').value || '',
+                noteFix: document.getElementById('noteFix').value || ''
+            };
+            
+            dashboardData.entries[currentDate] = entry;
+            localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+            
+            showSaveIndicator();
+            updateDisplay();
+            updateGraphs();
+            updateWeeklySummary();
+        }
+        
+        function loadData() {
+            const currentDate = startDateInput.value;
+            if (!currentDate || !dashboardData.entries[currentDate]) {
+                clearInputs();
+                return;
+            }
+            
+            const entry = dashboardData.entries[currentDate];
+            document.getElementById('sleepHours').value = entry.sleep || '';
+            document.getElementById('sleepQuality').value = entry.sleepQuality || 'Good';
+            document.getElementById('exerciseMinutes').value = entry.exercise || '';
+            document.getElementById('exerciseType').value = entry.exerciseType || 'None';
+            document.getElementById('assignmentHours').value = entry.assignment || '';
+            document.getElementById('assignmentType').value = entry.assignmentType || 'None';
+            document.getElementById('academicHours').value = entry.academic || '';
+            document.getElementById('academicSubject').value = entry.academicSubject || 'None';
+            document.getElementById('codingHours').value = entry.coding || '';
+            document.getElementById('codingFocus').value = entry.codingFocus || 'Normal';
+            document.getElementById('contentHours').value = entry.content || '';
+            document.getElementById('screenTimeHours').value = entry.screenTime || '';
+            document.getElementById('reelsHours').value = entry.reels || '';
+            document.getElementById('noteRight').value = entry.noteRight || '';
+            document.getElementById('noteFix').value = entry.noteFix || '';
+            
+            updateDisplay();
+        }
+        
+        function clearInputs() {
+            document.getElementById('sleepHours').value = '';
+            document.getElementById('sleepQuality').value = 'Good';
+            document.getElementById('exerciseMinutes').value = '';
+            document.getElementById('exerciseType').value = 'None';
+            document.getElementById('assignmentHours').value = '';
+            document.getElementById('assignmentType').value = 'None';
+            document.getElementById('academicHours').value = '';
+            document.getElementById('academicSubject').value = 'None';
+            document.getElementById('codingHours').value = '';
+            document.getElementById('codingFocus').value = 'Normal';
+            document.getElementById('contentHours').value = '';
+            document.getElementById('screenTimeHours').value = '';
+            document.getElementById('reelsHours').value = '';
+            document.getElementById('noteRight').value = '';
+            document.getElementById('noteFix').value = '';
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const currentDate = startDateInput.value;
+            const entry = dashboardData.entries[currentDate] || {};
+            
+            document.getElementById('displaySleep').textContent = entry.sleep ? entry.sleep + 'h' : '0h';
+            document.getElementById('displaySleepQuality').textContent = entry.sleepQuality || 'N/A';
+            
+            document.getElementById('displayExercise').textContent = entry.exercise ? entry.exercise + 'm' : '0m';
+            document.getElementById('displayExerciseType').textContent = entry.exerciseType || 'None';
+            
+            document.getElementById('displayAssignment').textContent = entry.assignment ? entry.assignment + 'h' : '0h';
+            document.getElementById('displayAssignmentType').textContent = entry.assignmentType || 'None';
+            
+            document.getElementById('displayAcademic').textContent = entry.academic ? entry.academic + 'h' : '0h';
+            document.getElementById('displayAcademicSubject').textContent = entry.academicSubject || 'None';
+            
+            document.getElementById('displayCoding').textContent = entry.coding ? entry.coding + 'h' : '0h';
+            document.getElementById('displayCodingFocus').textContent = entry.codingFocus || 'Normal';
+            
+            document.getElementById('displayContent').textContent = entry.content ? entry.content + 'h' : '0h';
+            document.getElementById('displayScreenTime').textContent = entry.screenTime ? entry.screenTime + 'h' : '0h';
+            document.getElementById('displayReels').textContent = entry.reels ? entry.reels + 'h' : '0h';
+        }
+        
+        function updateGraphs() {
+            const currentDate = startDateInput.value;
+            const entry = dashboardData.entries[currentDate] || {};
+            
+            // Update bar chart with current day's data
+            const barChart = document.querySelector('.bar-chart');
+            const coding = entry.coding || 0;
+            const assignment = entry.assignment || 0;
+            const academic = entry.academic || 0;
+            const content = entry.content || 0;
+            const reels = entry.reels || 0;
+            const sleep = entry.sleep || 0;
+            const exercise = entry.exercise || 0;
+            
+            const maxValue = Math.max(coding, assignment, academic, content, reels, sleep, exercise / 60) || 10;
+            
+            barChart.innerHTML = `
+                <div class="bar" style="height: ${(coding / maxValue) * 100}%;">
+                    <div class="bar-label">Code</div>
+                </div>
+                <div class="bar" style="height: ${(assignment / maxValue) * 100}%;">
+                    <div class="bar-label">Assign</div>
+                </div>
+                <div class="bar" style="height: ${(academic / maxValue) * 100}%;">
+                    <div class="bar-label">Study</div>
+                </div>
+                <div class="bar" style="height: ${(content / maxValue) * 100}%;">
+                    <div class="bar-label">Content</div>
+                </div>
+                <div class="bar negative" style="height: ${(reels / maxValue) * 100}%;">
+                    <div class="bar-label">Reels</div>
+                </div>
+            `;
+            
+            // Update line chart (last 7 days)
+            const dates = Object.keys(dashboardData.entries).sort().slice(-7);
+            if (dates.length > 1) {
+                const sleepPoints = dates.map((d, i) => {
+                    const s = dashboardData.entries[d].sleep || 0;
+                    const x = (i / (dates.length - 1)) * 300;
+                    const y = 100 - ((s / 12) * 80);
+                    return `${x},${y}`;
+                }).join(' ');
+                
+                const codingPoints = dates.map((d, i) => {
+                    const c = dashboardData.entries[d].coding || 0;
+                    const x = (i / (dates.length - 1)) * 300;
+                    const y = 100 - ((c / 12) * 80);
+                    return `${x},${y}`;
+                }).join(' ');
+                
+                document.querySelector('.line-chart svg').innerHTML = `
+                    <polyline fill="none" stroke="#00ff88" stroke-width="2" points="${sleepPoints}" />
+                    <polyline fill="none" stroke="#00f5ff" stroke-width="2" points="${codingPoints}" />
+                `;
+            }
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            const entries = Object.values(dashboardData.entries);
+            if (entries.length === 0) {
+                document.querySelector('.stat-grid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">0h</div>
+                        <div class="stat-label">Most Productive Day</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">0h</div>
+                        <div class="stat-label">Worst Reels Day</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">0h</div>
+                        <div class="stat-label">Average Sleep</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">0 days</div>
+                        <div class="stat-label">Workout Streak</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const codingHours = entries.map(e => e.coding || 0);
+            const reelsHours = entries.map(e => e.reels || 0);
+            const sleepHours = entries.map(e => e.sleep || 0);
+            
+            // Calculate workout streak
+            const sortedDates = Object.keys(dashboardData.entries).sort().reverse();
+            let workoutStreak = 0;
+            for (let date of sortedDates) {
+                if (dashboardData.entries[date].exercise > 0) {
+                    workoutStreak++;
+                } else {
+                    break;
+                }
+            }
+            
+            const maxCoding = Math.max(...codingHours, 0);
+            const maxReels = Math.max(...reelsHours, 0);
+            const avgSleep = sleepHours.length > 0 ? (sleepHours.reduce((a, b) => a + b, 0) / sleepHours.length).toFixed(1) : 0;
+            
+            document.querySelector('.stat-grid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${maxCoding.toFixed(1)}h</div>
+                    <div class="stat-label">Most Productive Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${maxReels.toFixed(1)}h</div>
+                    <div class="stat-label">Worst Reels Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${avgSleep}h</div>
+                    <div class="stat-label">Average Sleep</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${workoutStreak} days</div>
+                    <div class="stat-label">Workout Streak</div>
+                </div>
+            `;
+            
+            // Update pie chart
+            const totalProductive = entries.reduce((sum, e) => sum + (e.coding || 0) + (e.assignment || 0) + (e.academic || 0) + (e.content || 0), 0);
+            const totalWasted = entries.reduce((sum, e) => sum + (e.reels || 0), 0);
+            const total = totalProductive + totalWasted || 1;
+            const productivePercent = ((totalProductive / total) * 100).toFixed(0);
+            const wastedPercent = ((totalWasted / total) * 100).toFixed(0);
+            
+            document.querySelector('.pie-chart').style.background = `conic-gradient(
+                #00f5ff 0deg ${productivePercent * 3.6}deg,
+                #ff006e ${productivePercent * 3.6}deg 360deg
+            )`;
+            
+            document.querySelector('.pie-legend').innerHTML = `
+                <div class="legend-item">
+                    <div class="legend-dot productive"></div>
+                    <span>Productive: ${productivePercent}%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot wasted"></div>
+                    <span>Wasted: ${wastedPercent}%</span>
+                </div>
+            `;
+        }
+        
+        function updateWeeklySummary() {
+            const allDates = Object.keys(dashboardData.entries).sort();
+            if (allDates.length === 0) {
+                document.getElementById('weekScroll').innerHTML = `
+                    <div class="week-card">
+                        <div class="week-title">No data yet</div>
+                        <div class="week-stat">
+                            <span class="week-stat-label">Start logging data</span>
+                            <span class="week-stat-value">📊</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group by weeks
+            const weeks = {};
+            allDates.forEach(dateStr => {
+                const date = new Date(dateStr);
+                const weekNum = Math.floor((date - semesterStartDate) / (7 * 24 * 60 * 60 * 1000)) + 1;
+                if (!weeks[weekNum]) weeks[weekNum] = [];
+                weeks[weekNum].push(dateStr);
+            });
+            
+            let weekHTML = '';
+            Object.keys(weeks).sort((a, b) => a - b).forEach(weekNum => {
+                const weekDates = weeks[weekNum];
+                const weekEntries = weekDates.map(d => dashboardData.entries[d]);
+                
+                const avgCoding = (weekEntries.reduce((s, e) => s + (e.coding || 0), 0) / weekEntries.length).toFixed(1);
+                const avgSleep = (weekEntries.reduce((s, e) => s + (e.sleep || 0), 0) / weekEntries.length).toFixed(1);
+                const exerciseDays = weekEntries.filter(e => e.exercise > 0).length;
+                
+                weekHTML += `
+                    <div class="week-card">
+                        <div class="week-title">Week ${weekNum}</div>
+                        <div class="week-stat">
+                            <span class="week-stat-label">Avg Coding</span>
+                            <span class="week-stat-value">${avgCoding}h</span>
+                        </div>
+                        <div class="week-stat">
+                            <span class="week-stat-label">Avg Sleep</span>
+                            <span class="week-stat-value">${avgSleep}h</span>
+                        </div>
+                        <div class="week-stat">
+                            <span class="week-stat-label">Exercise Days</span>
+                            <span class="week-stat-value">${exerciseDays}/${weekDates.length}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('weekScroll').innerHTML = weekHTML;
+        }
+        
+        // Set today's date as default
+        const today = new Date();
+        startDateInput.value = today.toISOString().split('T')[0];
+        
+        // Initialize
+        calculateDays();
+        loadData();
+        updateGraphs();
+        updateWeeklySummary();
+        
+        // Event listeners
+        startDateInput.addEventListener('change', () => {
+            calculateDays();
+            loadData();
+            updateGraphs();
+            updateWeeklySummary();
+        });
+        
+        // Auto-save on input change
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            if (element.id !== 'startDate') {
+                element.addEventListener('change', saveData);
+                element.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'TEXTAREA') {
+                        saveData();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
